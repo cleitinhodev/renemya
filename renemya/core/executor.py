@@ -14,7 +14,7 @@ from .journal import Journal
 from .models import Plan
 
 Progress = Callable[[int, int], None]
-TMP_PREFIX = ".rt-tmp-"
+TMP_PREFIX = ".renemya-tmp-"
 
 
 class PreflightError(Exception):

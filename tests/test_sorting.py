@@ -1,4 +1,4 @@
-from renamethis.core import SortKey, SortOptions, natural_key, scan, sort_entries
+from renemya.core import SortKey, SortOptions, natural_key, scan, sort_entries
 from tests.conftest import make_files
 
 

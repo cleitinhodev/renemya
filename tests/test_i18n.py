@@ -1,10 +1,10 @@
 import re
 from pathlib import Path
 
-from renamethis.core.rules import RULE_TYPES
-from renamethis.i18n import LANGUAGES, keys, normalize_language, set_language, tr
+from renemya.core.rules import RULE_TYPES
+from renemya.i18n import LANGUAGES, keys, normalize_language, set_language, tr
 
-SRC = Path(__file__).resolve().parents[1] / "renamethis"
+SRC = Path(__file__).resolve().parents[1] / "renemya"
 
 
 def test_all_languages_have_same_keys():

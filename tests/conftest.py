@@ -6,8 +6,8 @@ from typing import ClassVar
 
 import pytest
 
-from renamethis.core import Journal, ScanOptions, build_plan, scan, sort_entries
-from renamethis.core.rules import Rule
+from renemya.core import Journal, ScanOptions, build_plan, scan, sort_entries
+from renemya.core.rules import Rule
 
 
 @dataclass
@@ -26,7 +26,7 @@ class MapRule(Rule):
 
 @pytest.fixture(autouse=True)
 def _isolated_data_dir(tmp_path, monkeypatch):
-    monkeypatch.setenv("RENAMETHIS_DATA_DIR", str(tmp_path / "_data"))
+    monkeypatch.setenv("RENEMYA_DATA_DIR", str(tmp_path / "_data"))
 
 
 @pytest.fixture

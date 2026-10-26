@@ -1,4 +1,4 @@
-"""Interface de linha de comando do RenameThis (usa o mesmo núcleo da interface gráfica)."""
+"""Interface de linha de comando do Renemya (usa o mesmo núcleo da interface gráfica)."""
 
 from __future__ import annotations
 
@@ -116,9 +116,9 @@ class _RuleAction(argparse.Action):
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="renamethis-cli", description=tr("cli.description"), epilog=tr("cli.epilog")
+        prog="renemya-cli", description=tr("cli.description"), epilog=tr("cli.epilog")
     )
-    p.add_argument("--version", action="version", version=f"RenameThis {__version__}")
+    p.add_argument("--version", action="version", version=f"Renemya {__version__}")
     p.add_argument("--lang", choices=sorted(LANGUAGES), help=tr("cli.help.lang"))
     sub = p.add_subparsers(dest="command", required=True)
 

@@ -11,7 +11,7 @@ on:
     tags: ["v*"]
     branches: [v2-pyside6]
     paths:
-      - "renamethis/**"
+      - "renemya/**"
       - "packaging/**"
       - "Design/**"
       - "pyproject.toml"
@@ -38,25 +38,25 @@ jobs:
       - name: PyInstaller (interface)
         run: >
           pyinstaller --noconfirm --clean --onefile --windowed
-          --name RenameThis
+          --name Renemya
           --icon Design/icone.ico
           --add-data "Design;Design"
           --paths .
-          --collect-data renamethis
+          --collect-data renemya
           packaging/gui_launcher.py
       - name: PyInstaller (linha de comando)
         run: >
           pyinstaller --noconfirm --onefile --console
-          --name renamethis-cli
+          --name renemya-cli
           --icon Design/icone.ico
           --paths .
-          --collect-data renamethis
+          --collect-data renemya
           packaging/cli_launcher.py
       - name: Teste rápido do executável de linha de comando
-        run: dist/renamethis-cli.exe --version
+        run: dist/renemya-cli.exe --version
       - uses: actions/upload-artifact@v4
         with:
-          name: RenameThis-windows
+          name: Renemya-windows
           path: dist/*.exe
       - name: Publica no Release
         if: startsWith(github.ref, 'refs/tags/')

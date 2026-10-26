@@ -1,7 +1,7 @@
 import pytest
 
-from renamethis.core import ScanError, ScanOptions, scan
-from renamethis.core.scanner import parse_ext_list
+from renemya.core import ScanError, ScanOptions, scan
+from renemya.core.scanner import parse_ext_list
 from tests.conftest import make_files
 
 

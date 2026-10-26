@@ -1,7 +1,7 @@
 import pytest
 
-from renamethis.core.models import Level, split_name
-from renamethis.core.validation import normalize_key, validate_name
+from renemya.core.models import Level, split_name
+from renemya.core.validation import normalize_key, validate_name
 
 
 def codes(name):

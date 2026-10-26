@@ -1,9 +1,9 @@
-"""Tema visual do RenameThis: paletas clara/escura, folha de estilo (QSS) e ícones.
+"""Tema visual do Renemya: paletas clara/escura, folha de estilo (QSS) e ícones.
 
 - O estilo base é sempre o *Fusion*, para a folha de estilo ficar igual em
   Windows, macOS e Linux.
 - O modo claro/escuro segue o sistema (e acompanha a troca em tempo real).
-  ``RENAMETHIS_THEME=light|dark`` força um dos dois.
+  ``RENEMYA_THEME=light|dark`` força um dos dois.
 - Os ícones são SVGs embutidos aqui, coloridos conforme a paleta e convertidos
   em PNG com o QtSvg. Assim funcionam no executável do PyInstaller sem depender
   de plugins de imagem.
@@ -280,7 +280,7 @@ def _asset_dir(palette: ThemePalette) -> Path:
         "chevron-down-light": ("chevron-down", palette.header_text, 14),
     }
     key = hashlib.sha1(repr(sorted(specs.items())).encode()).hexdigest()[:12]
-    folder = Path(tempfile.gettempdir()) / f"renamethis-theme-{key}"
+    folder = Path(tempfile.gettempdir()) / f"renemya-theme-{key}"
     folder.mkdir(parents=True, exist_ok=True)
     for name, (shape, color, size) in specs.items():
         for scale, suffix in ((1, ""), (2, "@2x")):
@@ -336,7 +336,7 @@ def _qt_palette(p: ThemePalette) -> QPalette:
 
 
 def system_prefers_dark(app: QGuiApplication | None = None) -> bool:
-    forced = os.environ.get("RENAMETHIS_THEME", "").strip().lower()
+    forced = os.environ.get("RENEMYA_THEME", "").strip().lower()
     if forced in ("dark", "escuro"):
         return True
     if forced in ("light", "claro"):
@@ -361,16 +361,16 @@ def apply_theme(app: QApplication, dark: bool | None = None) -> ThemePalette:
         dark = system_prefers_dark(app)
     palette = DARK if dark else LIGHT
     _current = palette
-    if not app.property("renamethis_fusion"):
+    if not app.property("renemya_fusion"):
         # (com folha de estilo ativa, app.style() vira um "proxy" sem nome)
         app.setStyle("Fusion")
-        app.setProperty("renamethis_fusion", True)
+        app.setProperty("renemya_fusion", True)
     font = QFont(app.font())
     font.setFamilies(FONT_FAMILIES)
     app.setFont(font)
     app.setPalette(_qt_palette(palette))
     app.setStyleSheet(build_stylesheet(palette))
-    app.setProperty("renamethis_dark", dark)
+    app.setProperty("renemya_dark", dark)
     return palette
 
 
@@ -378,7 +378,7 @@ def follow_system_theme(app: QApplication, on_change=None) -> None:
     """Reaplica o tema quando o sistema troca entre claro e escuro."""
     hints = app.styleHints()
     signal = getattr(hints, "colorSchemeChanged", None)
-    if signal is None or os.environ.get("RENAMETHIS_THEME"):
+    if signal is None or os.environ.get("RENEMYA_THEME"):
         return
 
     def changed(*_args) -> None:

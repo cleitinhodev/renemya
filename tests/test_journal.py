@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from renamethis.core import ScanOptions, apply_plan, recover_incomplete, undo_last
-from renamethis.core.rules import PrefixSuffixRule
+from renemya.core import ScanOptions, apply_plan, recover_incomplete, undo_last
+from renemya.core.rules import PrefixSuffixRule
 from tests.conftest import make_files, map_plan, plan_for, snapshot
 
 

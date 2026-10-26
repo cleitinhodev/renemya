@@ -1,4 +1,4 @@
-"""Janela principal do RenameThis."""
+"""Janela principal do Renemya."""
 
 from __future__ import annotations
 
@@ -90,7 +90,7 @@ class MainWindow(QMainWindow):
         check_incomplete: bool = True,
     ) -> None:
         super().__init__()
-        self.settings = settings or QSettings("CleitinhoDEV", "RenameThis")
+        self.settings = settings or QSettings("CleitinhoDEV", "Renemya")
         self.journal = journal or Journal()
         self.rules: list[Rule] = []
         self.scan_opts = ScanOptions()

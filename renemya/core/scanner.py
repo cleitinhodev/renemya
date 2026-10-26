@@ -101,7 +101,7 @@ def is_system(path: Path, st: os.stat_result | None = None) -> bool:
 
 def scan(folder: str | os.PathLike[str], options: ScanOptions | None = None) -> list[FileEntry]:
     """Lista os itens da pasta aplicando os filtros. A ordem do retorno não é garantida;
-    use :func:`renamethis.core.sorting.sort_entries`."""
+    use :func:`renemya.core.sorting.sort_entries`."""
     options = options or ScanOptions()
     if not folder or not str(folder).strip():
         raise ScanError("folder_empty")

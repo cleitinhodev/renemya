@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from renamethis.cli import main, parse_rule_args
-from renamethis.core.rules import CounterRule
+from renemya.cli import main, parse_rule_args
+from renemya.core.rules import CounterRule
 from tests.conftest import make_files, snapshot
 
 

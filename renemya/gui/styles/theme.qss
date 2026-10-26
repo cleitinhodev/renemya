@@ -1,5 +1,5 @@
-/* RenameThis! — folha de estilo.
-   As marcações com chaves duplas (ex.: accent) são trocadas pelas cores de renamethis/gui/theme.py
+/* Renemya — folha de estilo.
+   As marcações com chaves duplas (ex.: accent) são trocadas pelas cores de renemya/gui/theme.py
    (variante clara ou escura) e "assets" pela pasta dos ícones gerados. */
 
 /* ------------------------------------------------------------ base */

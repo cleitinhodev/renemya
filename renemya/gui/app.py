@@ -16,7 +16,7 @@ from .resources import resource_path
 
 def create_app(argv: list[str] | None = None) -> QApplication:
     app = QApplication.instance() or QApplication(argv if argv is not None else sys.argv)
-    app.setApplicationName("RenameThis")
+    app.setApplicationName("Renemya")
     app.setOrganizationName("CleitinhoDEV")
     app.setApplicationVersion(__version__)
     # Tema colorido (claro/escuro conforme o sistema), sobre o estilo Fusion
@@ -29,7 +29,7 @@ def create_app(argv: list[str] | None = None) -> QApplication:
 
 def main(argv: list[str] | None = None) -> int:
     app = create_app(argv)
-    settings = QSettings("CleitinhoDEV", "RenameThis")
+    settings = QSettings("CleitinhoDEV", "Renemya")
     set_language(str(settings.value("language", "") or detect_language()))
     from .main_window import MainWindow
 

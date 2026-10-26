@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from renamethis.core import metadata
-from renamethis.core.models import FileEntry
-from renamethis.core.rules import (
+from renemya.core import metadata
+from renemya.core.models import FileEntry
+from renemya.core.rules import (
     RULE_TYPES,
     CaseRule,
     CleanupRule,

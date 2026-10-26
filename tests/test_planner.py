@@ -1,5 +1,5 @@
-from renamethis.core import ConflictPolicy, ScanOptions, SortOptions, Status
-from renamethis.core.rules import CounterRule, ExtensionRule, PrefixSuffixRule, ReplaceRule
+from renemya.core import ConflictPolicy, ScanOptions, SortOptions, Status
+from renemya.core.rules import CounterRule, ExtensionRule, PrefixSuffixRule, ReplaceRule
 from tests.conftest import make_files, map_plan, plan_for
 
 

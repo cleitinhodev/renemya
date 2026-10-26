@@ -3,7 +3,7 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "renamethis"
+name = "renemya"
 version = "2.0.0.dev0"
 description = "Renomeador de arquivos em lote seguro, com prévia, regras combináveis e desfazer."
 readme = "README.md"
@@ -29,20 +29,20 @@ dev = ["pytest>=8.0", "ruff>=0.5", "Pillow>=10.0", "mutagen>=1.47"]
 build = ["pyinstaller>=6.0"]
 
 [project.scripts]
-renamethis-cli = "renamethis.cli:main"
+renemya-cli = "renemya.cli:main"
 
 [project.gui-scripts]
-renamethis = "renamethis.gui.app:main"
+renemya = "renemya.gui.app:main"
 
 [project.urls]
-Homepage = "https://github.com/cleitinhodev/RenameThis"
+Homepage = "https://github.com/cleitinhodev/Renemya"
 
 [tool.setuptools.packages.find]
-include = ["renamethis*"]
+include = ["renemya*"]
 
 [tool.setuptools.package-data]
-"renamethis.i18n" = ["*.json"]
-"renamethis.gui" = ["styles/*.qss"]
+"renemya.i18n" = ["*.json"]
+"renemya.gui" = ["styles/*.qss"]
 
 [tool.ruff]
 line-length = 100

@@ -44,7 +44,7 @@ def normalize_language(lang: str | None) -> str:
 
 
 def detect_language() -> str:
-    env = os.environ.get("RENAMETHIS_LANG")
+    env = os.environ.get("RENEMYA_LANG")
     if env:
         return normalize_language(env)
     try:

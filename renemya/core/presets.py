@@ -25,7 +25,7 @@ class Preset:
 
     def to_dict(self) -> dict:
         return {
-            "app": "RenameThis",
+            "app": "Renemya",
             "version": PRESET_VERSION,
             "name": self.name,
             "rules": [r.to_dict() for r in self.rules],

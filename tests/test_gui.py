@@ -11,13 +11,13 @@ pytest.importorskip("PySide6.QtWidgets", exc_type=ImportError)
 from PySide6.QtCore import QSettings  # noqa: E402
 from PySide6.QtWidgets import QApplication  # noqa: E402
 
-from renamethis.core import Journal, Status  # noqa: E402
-from renamethis.core.rules import CounterRule, PrefixSuffixRule  # noqa: E402
-from renamethis.gui.app import create_app  # noqa: E402
-from renamethis.gui.main_window import MainWindow  # noqa: E402
-from renamethis.gui.resources import resource_path  # noqa: E402
-from renamethis.gui.rule_editor import RuleEditor  # noqa: E402
-from renamethis.i18n import set_language  # noqa: E402
+from renemya.core import Journal, Status  # noqa: E402
+from renemya.core.rules import CounterRule, PrefixSuffixRule  # noqa: E402
+from renemya.gui.app import create_app  # noqa: E402
+from renemya.gui.main_window import MainWindow  # noqa: E402
+from renemya.gui.resources import resource_path  # noqa: E402
+from renemya.gui.rule_editor import RuleEditor  # noqa: E402
+from renemya.i18n import set_language  # noqa: E402
 from tests.conftest import make_files, snapshot  # noqa: E402
 
 
@@ -51,7 +51,7 @@ def wait_idle(w, timeout=10.0):
 
 
 def test_window_constructs(window):
-    assert window.windowTitle().startswith("RenameThis!")
+    assert window.windowTitle().startswith("Renemya")
     assert not window.apply_button.isEnabled()
     assert not window.undo_button.isEnabled()
     assert "pasta" in window.summary_label.text().lower()
@@ -148,7 +148,7 @@ def test_language_switch_rebuilds_ui(window):
 
 
 def test_preset_roundtrip_through_window(window, tmp_path):
-    from renamethis.core import Preset, save_preset
+    from renemya.core import Preset, save_preset
 
     path = tmp_path / "p.json"
     save_preset(Preset(rules=[CounterRule(padding=4)]), path)
@@ -162,7 +162,7 @@ def test_preset_roundtrip_through_window(window, tmp_path):
 
 @pytest.mark.parametrize("kind", ["remove", "template", "date", "extension", "replace"])
 def test_rule_editor_updates_rule(app, kind):
-    from renamethis.core.rules import RULE_TYPES
+    from renemya.core.rules import RULE_TYPES
 
     rule = RULE_TYPES[kind]()
     editor = RuleEditor(rule)

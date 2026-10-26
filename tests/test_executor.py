@@ -3,9 +3,9 @@ import os
 
 import pytest
 
-from renamethis.core import ScanOptions, SortOptions, apply_plan, fsops
-from renamethis.core.executor import TMP_PREFIX
-from renamethis.core.rules import CounterRule, PrefixSuffixRule, TemplateRule
+from renemya.core import ScanOptions, SortOptions, apply_plan, fsops
+from renemya.core.executor import TMP_PREFIX
+from renemya.core.rules import CounterRule, PrefixSuffixRule, TemplateRule
 from tests.conftest import make_files, map_plan, plan_for, snapshot
 
 

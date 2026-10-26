@@ -1,4 +1,4 @@
-"""Núcleo do RenameThis (lógica pura, sem dependência de interface gráfica).
+"""Núcleo do Renemya (lógica pura, sem dependência de interface gráfica).
 
 Fluxo típico::
 

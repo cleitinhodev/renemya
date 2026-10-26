@@ -1,6 +1,6 @@
 import pytest
 
-from renamethis.core import (
+from renemya.core import (
     ConflictPolicy,
     Preset,
     ScanOptions,
@@ -9,7 +9,7 @@ from renamethis.core import (
     load_preset,
     save_preset,
 )
-from renamethis.core.rules import CounterRule, ReplaceRule
+from renemya.core.rules import CounterRule, ReplaceRule
 
 
 def test_preset_roundtrip(tmp_path):

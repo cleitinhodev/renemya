@@ -18,7 +18,7 @@ MAX_ENTRIES = 200
 
 
 def default_data_dir() -> Path:
-    env = os.environ.get("RENAMETHIS_DATA_DIR")
+    env = os.environ.get("RENEMYA_DATA_DIR")
     if env:
         return Path(env)
     try:
@@ -26,7 +26,7 @@ def default_data_dir() -> Path:
 
         return Path(user_data_dir(APP_NAME, appauthor=False))
     except ImportError:  # pragma: no cover
-        return Path.home() / ".renamethis"
+        return Path.home() / ".renemya"
 
 
 @dataclass
