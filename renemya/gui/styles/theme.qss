@@ -24,6 +24,8 @@ QMenuBar {
     color: {{header_text}};
     padding: 3px 6px;
     border: none;
+    border-bottom: 1px solid qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 {{header1}}, stop:0.45 {{neon}}, stop:0.7 {{neon2}}, stop:1 {{header3}});
 }
 QMenuBar::item {
     background: transparent;
@@ -53,7 +55,7 @@ QMenuBar::item:selected, QMenuBar::item:pressed {
     color: {{text}};
 }
 #HeaderBar QLineEdit:focus {
-    border: 1px solid {{accent3}};
+    border: 1px solid {{neon}};
 }
 #HeaderBar QPushButton, #HeaderBar QToolButton {
     background: rgba(255, 255, 255, 0.16);
@@ -112,7 +114,7 @@ QSplitter::handle {
 }
 QSplitter::handle:hover {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0.35 transparent, stop:0.45 {{accent}}, stop:0.55 {{accent}},
+                stop:0.35 transparent, stop:0.45 {{neon}}, stop:0.55 {{neon}},
                 stop:0.65 transparent);
 }
 
@@ -155,7 +157,7 @@ QPushButton:default {
 }
 #PrimaryButton:hover {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 {{accent_hover}}, stop:0.5 {{accent2}}, stop:1 {{accent_hover2}});
+                stop:0 {{accent_hover}}, stop:0.55 {{accent2}}, stop:1 {{neon2}});
 }
 #PrimaryButton:pressed {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
@@ -231,7 +233,7 @@ QToolButton:pressed {
 }
 #AccentToolButton:hover {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 {{accent_hover}}, stop:1 {{accent3}});
+                stop:0 {{accent_hover}}, stop:1 {{neon2}});
 }
 #AccentToolButton:pressed {
     background: {{accent_pressed}};
@@ -254,7 +256,7 @@ QLineEdit:hover, QSpinBox:hover, QComboBox:hover {
     border-color: {{accent2}};
 }
 QLineEdit:focus, QSpinBox:focus, QComboBox:focus, QComboBox:on {
-    border: 1px solid {{border_focus}};
+    border: 1px solid {{neon}};
     background: {{surface}};
 }
 QLineEdit:disabled, QSpinBox:disabled, QComboBox:disabled {
@@ -410,7 +412,8 @@ QHeaderView::section {
     color: {{accent}};
     font-weight: 700;
     border: none;
-    border-bottom: 2px solid {{accent}};
+    border-bottom: 2px solid qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 {{accent}}, stop:1 {{neon}});
     border-right: 1px solid {{card_border}};
     padding: 7px 8px;
 }
@@ -448,7 +451,7 @@ QScrollBar::handle:horizontal {
     border-radius: 4px;
 }
 QScrollBar::handle:hover {
-    background: {{scrollbar_hover}};
+    background: {{neon}};
 }
 QScrollBar::add-line, QScrollBar::sub-line {
     width: 0px;
@@ -470,7 +473,7 @@ QProgressBar {
 QProgressBar::chunk {
     border-radius: 8px;
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 {{accent}}, stop:0.5 {{accent2}}, stop:1 {{accent3}});
+                stop:0 {{accent}}, stop:0.55 {{accent2}}, stop:1 {{neon2}});
 }
 
 /* ------------------------------------------------------------ menus e dicas */
@@ -506,7 +509,7 @@ QMenu::indicator {
 QToolTip {
     background: {{tooltip_bg}};
     color: {{tooltip_text}};
-    border: 1px solid {{accent}};
+    border: 1px solid {{neon}};
     border-radius: 8px;
     padding: 6px 8px;
 }
@@ -546,4 +549,59 @@ QDialogButtonBox QPushButton:default:hover, QMessageBox QPushButton:default:hove
     border: 1px dashed {{border}};
     border-radius: 8px;
     padding: 6px 8px;
+}
+
+/* ------------------------------------------------------------ janela "Sobre" */
+#AboutTitle {
+    color: {{accent}};
+    font-size: 22pt;
+    font-weight: 800;
+}
+#VersionChip {
+    color: {{neon_text}};
+    background: {{neon_soft}};
+    border: 1px solid {{neon}};
+    border-radius: 9px;
+    padding: 1px 10px;
+    font-weight: 700;
+}
+#AboutTagline {
+    font-size: 10.5pt;
+    font-weight: 600;
+}
+#AboutInfo {
+    color: {{text_muted}};
+}
+#LinkButton {
+    background: {{card}};
+    color: {{text}};
+    border: 1px solid {{card_border}};
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-weight: 600;
+}
+#LinkButton:hover {
+    background: {{neon_soft}};
+    border-color: {{neon}};
+    color: {{neon_text}};
+}
+#LinkButton:pressed {
+    background: {{accent_soft}};
+}
+#DonateButton {
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-size: 10.5pt;
+    font-weight: 800;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 {{neon}}, stop:0.55 {{neon2}}, stop:1 {{danger}});
+}
+#DonateButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #ffa94d, stop:0.55 {{neon}}, stop:1 {{neon2}});
+}
+#DonateButton:pressed {
+    background: {{neon2}};
 }

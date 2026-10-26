@@ -35,14 +35,14 @@ renemya-cli = "renemya.cli:main"
 renemya = "renemya.gui.app:main"
 
 [project.urls]
-Homepage = "https://github.com/cleitinhodev/Renemya"
+Homepage = "https://github.com/cleitinhodev/renemya"
 
 [tool.setuptools.packages.find]
 include = ["renemya*"]
 
 [tool.setuptools.package-data]
 "renemya.i18n" = ["*.json"]
-"renemya.gui" = ["styles/*.qss"]
+"renemya.gui" = ["styles/*.qss", "assets/*.ico", "assets/*.png"]
 
 [tool.ruff]
 line-length = 100

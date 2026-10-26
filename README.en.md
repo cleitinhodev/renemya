@@ -1,19 +1,27 @@
-# Rename This! 2.0
+<p align="center">
+  <img src="renemya/gui/assets/renemya_icon.png" alt="Renemya" width="160">
+</p>
 
-> 🇧🇷 [Versão em português](README.md)
+<h1 align="center">Renemya</h1>
 
-**Rename This!** renames thousands of files at once, and does it **quickly, predictably and safely**.
-Version 2 is a from-scratch rewrite in **Python + PySide6 (Qt)**. Before it touches anything it
-shows a full preview, refuses dangerous names, never overwrites a file, and lets you **undo**
-the last operation.
+<p align="center">
+  Safe, reversible — and good-looking — batch file renamer.<br>
+  🇧🇷 <a href="README.md">Versão em português</a>
+</p>
 
-> ⚠️ **Testing version** (branch `v2-pyside6`). Back up your important files until a stable release is out.
+**Renemya** (the new name of *Rename This!*) renames thousands of files at once, and does it
+**quickly, predictably and safely**. It is a from-scratch rewrite in **Python + PySide6 (Qt)**.
+Before it touches anything it shows a full preview, refuses dangerous names, never overwrites a
+file, and lets you **undo** the last operation.
+
+> ⚠️ **Testing version.** Back up your important files until a stable release is out.
 
 ## Download
 
-- Version 1 (legacy), for Windows 10/11: [Rename This (Win 10/11)](https://www.bugzinho.com/renamethis)
-- Version 2: once a release is tagged `v*`, `RenameThis.exe` is published under
-  [Releases](https://github.com/cleitinhodev/RenameThis/releases).
+- Windows executables (`Renemya.exe` and `renemya-cli.exe`) are built on every push to `main`:
+  open the [Actions](https://github.com/cleitinhodev/renemya/actions) tab, pick the latest
+  **Build (Windows .exe)** run and download the **Renemya-windows** artifact.
+- Stable versions will be published under [Releases](https://github.com/cleitinhodev/renemya/releases).
 
 ## Highlights
 
@@ -70,14 +78,17 @@ Template tokens:
 - Confirmation before applying, progress bar, final summary and Undo.
 - JSON presets.
 - Portuguese/English switch at runtime.
-- Light/dark theme that follows the system.
+- Light/dark theme that follows the system, with **neon orange** accents (the fox's color):
+  glowing streaks run along the header, the **Rename** button, the progress bar and the active
+  panel. Turn them off in *Edit → Animations* (saved). They pause when the window is minimized
+  or in the background.
 - The last session is restored on launch.
 
 ## Install from source (Python 3.10+)
 
 ```bash
-git clone https://github.com/cleitinhodev/RenameThis.git
-cd RenameThis && git checkout v2-pyside6
+git clone https://github.com/cleitinhodev/renemya.git
+cd renemya
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[media]"   # media = EXIF dates (Pillow) + music tags (mutagen); optional
 ```
@@ -85,18 +96,19 @@ pip install -e ".[media]"   # media = EXIF dates (Pillow) + music tags (mutagen)
 ## Usage
 
 ```bash
-renamethis                  # GUI (or: python -m renamethis)
+renemya                     # GUI (or: python -m renemya)
 
-renamethis-cli rename ./photos --sort modified --template "Photo_{n:03}" --dry-run
-renamethis-cli rename ./photos --sort modified --template "Photo_{n:03}" -y
-renamethis-cli rename ./docs --add remove mode=brackets --add case mode=lower
-renamethis-cli rules | undo | history | recover
+renemya-cli rename ./photos --sort modified --template "Photo_{n:03}" --dry-run
+renemya-cli rename ./photos --sort modified --template "Photo_{n:03}" -y
+renemya-cli rename ./docs --add remove mode=brackets --add case mode=lower
+renemya-cli rules | undo | history | recover
 ```
 
 Exit codes: `0` success, `1` error or aborted, `2` usage error.
 
 The journal and presets are stored in the platform's user data folder (for example
-`%LOCALAPPDATA%\RenameThis` on Windows). Set `RENAMETHIS_DATA_DIR` to use a different folder.
+`%LOCALAPPDATA%\Renemya` on Windows). Set `RENEMYA_DATA_DIR` to use a different folder and
+`RENEMYA_THEME=light|dark` to force a theme.
 
 ## Development
 
@@ -105,12 +117,13 @@ pip install -e ".[dev]"
 ruff check . && ruff format --check . && pytest
 ```
 
-CI runs lint and tests on Ubuntu and Windows. Pushing a `v*` tag builds `RenameThis.exe` and
-`renamethis-cli.exe` with PyInstaller and attaches them to the GitHub Release.
+CI runs lint and tests on Ubuntu and Windows. Every push to `main` builds `Renemya.exe` and
+`renemya-cli.exe` with PyInstaller as workflow artifacts (no Release is created). If you push a
+`v*` tag, they are also attached to that tag's Release.
 
 ## Credits
 
-By CleitinhoDEV. Support: [Patreon](https://www.patreon.com/CleitinhoDEV) · [Bugzinho.com](https://www.bugzinho.com)
+By [CleitinhoDEV](https://github.com/cleitinhodev). Support: [❤️ Donate](https://www.bugzinho.com/donate) · [Patreon](https://www.patreon.com/CleitinhoDEV) · [Bugzinho.com](https://www.bugzinho.com)
 
 Licensed under **GPL-3.0**. Built with:
 - PySide6 (LGPL-3.0)

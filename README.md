@@ -1,19 +1,28 @@
-# Rename This! 2.0
+<p align="center">
+  <img src="renemya/gui/assets/renemya_icon.png" alt="Renemya" width="160">
+</p>
 
-> 🇺🇸 [English version](README.en.md)
+<h1 align="center">Renemya</h1>
 
-**Rename This!** renomeia milhares de arquivos de uma vez de forma **rápida, previsível e segura**.
-A versão 2 foi reescrita do zero em **Python + PySide6 (Qt)**. Antes de mexer em qualquer coisa
-ela mostra uma prévia completa, recusa nomes perigosos, nunca sobrescreve arquivos e deixa
-**desfazer** a última operação.
+<p align="center">
+  Renomeador de arquivos em lote — seguro, reversível e bonito.<br>
+  🇺🇸 <a href="README.en.md">English version</a>
+</p>
 
-> ⚠️ **Versão em testes** (branch `v2-pyside6`). Até sair a versão estável, faça backup dos arquivos importantes.
+**Renemya** (novo nome do antigo *Rename This!*) renomeia milhares de arquivos de uma vez de forma
+**rápida, previsível e segura**. Foi reescrito do zero em **Python + PySide6 (Qt)**. Antes de mexer
+em qualquer coisa ele mostra uma prévia completa, recusa nomes perigosos, nunca sobrescreve arquivos
+e deixa **desfazer** a última operação.
+
+> ⚠️ **Versão em testes.** Até sair a versão estável, faça backup dos arquivos importantes.
 
 ## Download
 
-- Versão 1 (antiga), para Windows 10/11: [Rename This (Win 10/11)](https://www.bugzinho.com/renamethis-br)
-- Versão 2: quando uma versão for publicada com uma tag `v*`, o `RenameThis.exe` aparece na aba
-  [Releases](https://github.com/cleitinhodev/RenameThis/releases).
+- Os executáveis do Windows (`Renemya.exe` e `renemya-cli.exe`) são gerados a cada atualização da
+  branch `main`: abra a aba [Actions](https://github.com/cleitinhodev/renemya/actions), entre na
+  execução mais recente do **Build (Windows .exe)** e baixe o artefato **Renemya-windows**.
+- Quando uma versão estável for publicada, ela aparece na aba
+  [Releases](https://github.com/cleitinhodev/renemya/releases).
 
 ## O que há de novo
 
@@ -85,7 +94,10 @@ Exemplo: `Viagem_{exif:%Y-%m-%d}_{n:03}` vira `Viagem_2024-01-15_001.jpg`.
 - **Confirmação** antes de aplicar, barra de progresso, resumo no final e **Desfazer**.
 - **Predefinições**: salve e carregue conjuntos de regras e opções em JSON.
 - **Português e inglês**, com troca imediata no menu *Idioma*.
-- Tema **claro ou escuro**, seguindo o sistema.
+- Tema **claro ou escuro**, seguindo o sistema, com detalhes em **laranja neon** (a cor da
+  raposa do ícone). Riscos de luz percorrem o cabeçalho, o botão **Renomear**, a barra de
+  progresso e o painel ativo. Para desligar: menu *Editar → Animações* (a escolha fica salva).
+  As animações pausam sozinhas com a janela minimizada ou em segundo plano.
 - A última sessão (pasta, regras e opções) é restaurada ao reabrir.
 
 ## Instalação a partir do código
@@ -93,9 +105,8 @@ Exemplo: `Viagem_{exif:%Y-%m-%d}_{n:03}` vira `Viagem_2024-01-15_001.jpg`.
 Requer **Python 3.10 ou mais novo**.
 
 ```bash
-git clone https://github.com/cleitinhodev/RenameThis.git
-cd RenameThis
-git checkout v2-pyside6
+git clone https://github.com/cleitinhodev/renemya.git
+cd renemya
 
 python -m venv .venv
 # Windows: .venv\Scripts\activate    |    Linux/macOS: source .venv/bin/activate
@@ -108,32 +119,32 @@ pip install -e ".[media]"   # + datas EXIF de fotos (Pillow) e tags de música (
 
 ### Interface gráfica
 ```bash
-renamethis
+renemya
 # ou
-python -m renamethis
+python -m renemya
 ```
 
 ### Linha de comando
 ```bash
 # Prévia (não altera nada): numeração com 3 dígitos, ordenando por data de modificação
-renamethis-cli rename ./fotos --sort modified --template "Foto_{n:03}" --dry-run
+renemya-cli rename ./fotos --sort modified --template "Foto_{n:03}" --dry-run
 
 # Aplica (pede confirmação; use -y para pular)
-renamethis-cli rename ./fotos --sort modified --template "Foto_{n:03}"
+renemya-cli rename ./fotos --sort modified --template "Foto_{n:03}"
 
 # Várias regras, aplicadas na ordem em que aparecem
-renamethis-cli rename ./musicas --ext mp3,flac \
+renemya-cli rename ./musicas --ext mp3,flac \
     --add cleanup spaces=underscore strip_accents=true \
     --case lower
 
 # Regras avançadas com --add TIPO chave=valor
-renamethis-cli rename ./docs --add remove mode=brackets --add date source=modified position=prefix
+renemya-cli rename ./docs --add remove mode=brackets --add date source=modified position=prefix
 
-renamethis-cli rules      # lista todas as regras e parâmetros
-renamethis-cli undo       # desfaz a última operação
-renamethis-cli history    # mostra o histórico
-renamethis-cli recover    # restaura uma operação interrompida
-renamethis-cli --lang en rename ...   # mensagens em inglês
+renemya-cli rules      # lista todas as regras e parâmetros
+renemya-cli undo       # desfaz a última operação
+renemya-cli history    # mostra o histórico
+renemya-cli recover    # restaura uma operação interrompida
+renemya-cli --lang en rename ...   # mensagens em inglês
 ```
 
 Outras opções do `rename`:
@@ -147,11 +158,15 @@ Códigos de saída: `0` sucesso, `1` erro ou cancelado, `2` uso incorreto.
 
 ### Onde ficam os dados
 O histórico (diário) e as predefinições ficam em:
-- **Windows:** `%LOCALAPPDATA%\RenameThis`
-- **Linux:** `~/.local/share/RenameThis`
-- **macOS:** `~/Library/Application Support/RenameThis`
+- **Windows:** `%LOCALAPPDATA%\Renemya`
+- **Linux:** `~/.local/share/Renemya`
+- **macOS:** `~/Library/Application Support/Renemya`
 
-Para usar outra pasta, defina a variável `RENAMETHIS_DATA_DIR`.
+Para usar outra pasta, defina a variável `RENEMYA_DATA_DIR`. Para forçar o tema, use
+`RENEMYA_THEME=light` ou `RENEMYA_THEME=dark`.
+
+> Quem usou a versão de testes com o nome antigo: o histórico antigo continua em
+> `%LOCALAPPDATA%\RenameThis`. O Renemya começa com um histórico novo.
 
 ## Desenvolvimento
 
@@ -164,39 +179,41 @@ pytest                      # a interface é testada em modo offscreen
 Estrutura:
 
 ```
-renamethis/
+renemya/
   core/      motor sem Qt: varredura, regras, planejamento, validação, execução, diário, predefinições
-  gui/       interface PySide6 (janela, prévia, editor de regras, worker em QThread)
+  gui/       interface PySide6 (janela, prévia, editor de regras, worker em QThread, animações)
+  gui/assets ícones (renemya_icon = ícone geral, renemya_favicon = barra de título)
   i18n/      traduções pt_BR.json e en.json
   cli.py     linha de comando
 tests/       testes (pytest)
-Design/      ícones
 packaging/   scripts de entrada do PyInstaller
 ```
 
-**Gerar o executável do Windows:** envie uma tag (`git tag v2.0.0 && git push origin v2.0.0`).
-O GitHub Actions roda os testes, gera `RenameThis.exe` e `renamethis-cli.exe` com PyInstaller e
-anexa os arquivos ao Release. Para gerar localmente:
+**Gerar o executável do Windows:** a cada push na `main`, o GitHub Actions roda os testes e gera
+`Renemya.exe` e `renemya-cli.exe` com PyInstaller (ficam como artefatos da execução, sem criar
+Release). Se você criar uma tag `v*`, os arquivos também são anexados ao Release dessa tag.
+Para gerar localmente:
 
 ```bash
 pip install -e ".[dev,build]"
-pyinstaller --onefile --windowed --name RenameThis --icon Design/icone.ico ^
-  --add-data "Design;Design" --collect-data renamethis --paths . packaging/gui_launcher.py
+pyinstaller --onefile --windowed --name Renemya --icon renemya/gui/assets/renemya_icon.ico ^
+  --collect-data renemya --paths . packaging/gui_launcher.py
 ```
 
 ## Considerações finais
 
 Fico feliz em compartilhar esta ferramenta com a comunidade! É um prazer buscar soluções práticas
 para facilitar a vida de todos. Não tenho interesse em lucrar com isso, mas, caso queira ajudar com
-alguma contribuição, aqui está o meu Patreon: [Patreon - CleitinhoDEV](https://www.patreon.com/CleitinhoDEV).
+alguma contribuição: [❤️ Doar](https://www.bugzinho.com/donate) ·
+[Patreon - CleitinhoDEV](https://www.patreon.com/CleitinhoDEV).
 
-Mais informações: [Bugzinho.com](https://www.bugzinho.com)
+Mais informações: [Bugzinho.com](https://www.bugzinho.com) · GitHub: [@cleitinhodev](https://github.com/cleitinhodev)
 
 By CleitinhoDEV
 
 ## Créditos e licenças
 
-O Rename This! é distribuído sob a licença **GPL-3.0** (veja [LICENSE](LICENSE)). Ele usa estas
+O Renemya é distribuído sob a licença **GPL-3.0** (veja [LICENSE](LICENSE)). Ele usa estas
 bibliotecas de código aberto:
 
 - [**PySide6 / Qt for Python**](https://doc.qt.io/qtforpython-6/), interface gráfica, licença LGPL-3.0

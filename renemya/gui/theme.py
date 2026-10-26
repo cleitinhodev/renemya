@@ -87,6 +87,10 @@ class ThemePalette:
     scrollbar_hover: str
     tooltip_bg: str
     tooltip_text: str
+    neon: str  # laranja neon (tirado da raposa do ícone)
+    neon2: str  # laranja mais quente, para o fim dos degradês
+    neon_soft: str  # fundo suave alaranjado
+    neon_text: str  # laranja legível como texto sobre o fundo do tema
 
 
 LIGHT = ThemePalette(
@@ -135,6 +139,10 @@ LIGHT = ThemePalette(
     scrollbar_hover="#8f9bd6",
     tooltip_bg="#1e1b4b",
     tooltip_text="#f5f7ff",
+    neon="#fd9128",
+    neon2="#f2621f",
+    neon_soft="#fff1e3",
+    neon_text="#c2510c",
 )
 
 DARK = ThemePalette(
@@ -183,6 +191,10 @@ DARK = ThemePalette(
     scrollbar_hover="#5b63a8",
     tooltip_bg="#e8ebff",
     tooltip_text="#1e1b4b",
+    neon="#fd9128",
+    neon2="#ff6a2b",
+    neon_soft="#3a2418",
+    neon_text="#ffb066",
 )
 
 _current: ThemePalette = LIGHT
@@ -236,6 +248,21 @@ _SVG = {
     "skip": '<circle cx="12" cy="12" r="10" fill="{c}"/><path d="M7.5 12h9" stroke="#fff"'
     ' stroke-width="2.6" stroke-linecap="round"/>',
     "dot": '<circle cx="12" cy="12" r="5" fill="{c}"/>',
+    # ícones dos botões do "Sobre"
+    "github": '<path fill="{c}" d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.82-.26.82-.57l-.01-2.04'
+    "c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73"
+    " 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.31"
+    "-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1.01-.32"
+    " 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18"
+    ".77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22l-.01 3.29"
+    'c0 .32.21.69.82.57A12 12 0 0 0 12 .3"/>',
+    "code": '<path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15" fill="none"'
+    ' stroke="{c}" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>',
+    "globe": '<circle cx="12" cy="12" r="9" fill="none" stroke="{c}" stroke-width="2.1"/>'
+    '<path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9'
+    's1.3-6.4 3.9-9z" fill="none" stroke="{c}" stroke-width="2.1" stroke-linejoin="round"/>',
+    "heart": '<path d="M12 20.5s-7.6-4.6-9.4-9.4C1.2 7.4 3.6 4 7 4c2.1 0 3.6 1.2 5 3'
+    ' 1.4-1.8 2.9-3 5-3 3.4 0 5.8 3.4 4.4 7.1-1.8 4.8-9.4 9.4-9.4 9.4z" fill="{c}"/>',
 }
 
 

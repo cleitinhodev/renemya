@@ -15,7 +15,7 @@ from renemya.core import Journal, Status  # noqa: E402
 from renemya.core.rules import CounterRule, PrefixSuffixRule  # noqa: E402
 from renemya.gui.app import create_app  # noqa: E402
 from renemya.gui.main_window import MainWindow  # noqa: E402
-from renemya.gui.resources import resource_path  # noqa: E402
+from renemya.gui.resources import asset_path  # noqa: E402
 from renemya.gui.rule_editor import RuleEditor  # noqa: E402
 from renemya.i18n import set_language  # noqa: E402
 from tests.conftest import make_files, snapshot  # noqa: E402
@@ -58,8 +58,9 @@ def test_window_constructs(window):
 
 
 def test_icon_resource_found():
-    assert resource_path("Design/icone.ico") is not None
-    assert resource_path("nao/existe.png") is None
+    assert asset_path("renemya_icon.ico") is not None
+    assert asset_path("renemya_favicon.ico") is not None
+    assert asset_path("nao_existe.png") is None
 
 
 def test_preview_apply_and_undo(window, folder):

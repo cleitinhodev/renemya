@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from PySide6.QtCore import QSettings, Qt, QTimer, Slot
-from PySide6.QtGui import QAction, QActionGroup, QGuiApplication, QIcon, QKeySequence
+from PySide6.QtGui import QAction, QActionGroup, QGuiApplication, QKeySequence
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
@@ -37,7 +37,6 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from .. import __version__
 from ..core import (
     ConflictPolicy,
     Journal,
@@ -51,7 +50,6 @@ from ..core import (
     apply_plan,
     build_plan,
     load_preset,
-    metadata,
     recover_incomplete,
     save_preset,
     scan,
@@ -63,10 +61,10 @@ from ..core.journal import default_data_dir
 from ..core.rules import RULE_TYPES, Rule
 from ..core.scanner import parse_ext_list
 from ..i18n import LANGUAGES, error_text, get_language, set_language, tr
-from . import theme
-from .dialogs import HistoryDialog
+from . import neon, theme
+from .dialogs import AboutDialog, HistoryDialog
 from .preview_model import COLUMNS, PreviewDelegate, PreviewModel
-from .resources import resource_path
+from .resources import TITLE_ICON, load_icon, set_windows_taskbar_icon
 from .rule_editor import RuleEditor
 from .workers import start_worker
 
@@ -114,9 +112,18 @@ class MainWindow(QMainWindow):
         self.preview_timer = QTimer(self, singleShot=True, interval=200)
         self.preview_timer.timeout.connect(self.refresh_preview)
 
-        icon_path = resource_path("Design/icone.ico")
-        if icon_path:
-            self.setWindowIcon(QIcon(str(icon_path)))
+        # barra de título: cabeça da raposa; barra de tarefas/Alt+Tab: ícone geral (app.py)
+        self.setWindowIcon(load_icon(TITLE_ICON))
+        self._native_icon_set = False
+        # animações neon (um relógio só para a janela; pausa se minimizada/sem foco)
+        self.neon_clock = neon.NeonClock(
+            self, enabled=neon.settings_bool(self.settings.value("animations", True))
+        )
+        self.neon_panels: dict = {}
+        self.neon_clock.watch(self)
+        app = QApplication.instance()
+        if app is not None:
+            app.focusChanged.connect(self._on_focus_changed)
         self.setAcceptDrops(True)
         self._restore_session()
         self._refresh_undo_state()
@@ -193,6 +200,11 @@ class MainWindow(QMainWindow):
         self.settings.setValue("geometry", self.saveGeometry())
         self.settings.setValue("language", get_language())
 
+    def showEvent(self, event) -> None:  # noqa: N802
+        super().showEvent(event)
+        if not self._native_icon_set:
+            self._native_icon_set = set_windows_taskbar_icon(self)
+
     def closeEvent(self, event) -> None:  # noqa: N802
         if self._running:
             self.notify("warning", tr("app.title"), tr("busy"))
@@ -205,6 +217,8 @@ class MainWindow(QMainWindow):
     def _build_ui(self) -> None:
         """(Re)constrói a interface a partir do estado — usado também ao trocar de idioma."""
         self.setWindowTitle(f"{tr('app.title')} — {tr('app.tagline')}")
+        self.neon_clock.clear()
+        self.neon_panels = {}
         self._build_menus()
         old = self.centralWidget()
         central = QWidget()
@@ -279,6 +293,67 @@ class MainWindow(QMainWindow):
         self.model.retranslate()
         self._update_summary()
         self._update_buttons()
+        self._install_neon()
+
+    # ================================================================ animações
+    def _install_neon(self) -> None:
+        """Riscos neon: cabeçalho, botão Renomear, barra de progresso e painel ativo."""
+        clock = self.neon_clock
+        dark = theme.current().dark
+        self.neon_header = neon.install(
+            self.top_bar,
+            clock,
+            speed=150,
+            trail=190,
+            streaks=2,
+            radius=14,
+            inset=1.5,
+            width=2.0,
+            glow=8,
+        )
+        self.neon_apply = neon.install(
+            self.apply_button, clock, speed=105, trail=85, radius=12, inset=1.5, width=2.2, glow=7
+        )
+        self.neon_progress = neon.install(
+            self.progress, clock, mode="bar", speed=150, trail=60, radius=7, width=2.0
+        )
+        for box in (self.rules_box, self.editor_box, self.options_box, self.preview_box):
+            overlay = neon.install(
+                box,
+                clock,
+                top=14,
+                radius=14,
+                inset=0.5,
+                speed=130,
+                trail=150,
+                width=1.6,
+                glow=6,
+                strength=0.9 if dark else 0.8,
+            )
+            overlay.active = False
+            self.neon_panels[box] = overlay
+        self._on_focus_changed(None, QApplication.focusWidget())
+
+    def _on_focus_changed(self, _old, new) -> None:
+        """O painel que tem o foco ganha um contorno neon discreto."""
+        try:
+            for box, overlay in self.neon_panels.items():
+                active = new is not None and box.isAncestorOf(new)
+                if overlay.active != active:
+                    overlay.active = active
+                    overlay.advance()
+        except RuntimeError:  # interface sendo reconstruída
+            pass
+
+    def animations_enabled(self) -> bool:
+        return self.neon_clock.enabled
+
+    def set_animations(self, enabled: bool) -> None:
+        enabled = bool(enabled)
+        self.neon_clock.set_enabled(enabled)
+        self.settings.setValue("animations", enabled)
+        if self.act_animations.isChecked() != enabled:
+            self.act_animations.setChecked(enabled)
 
     def rebuild_for_theme(self) -> None:
         """Chamado quando o sistema troca entre claro e escuro (os ícones mudam de cor)."""
@@ -304,6 +379,11 @@ class MainWindow(QMainWindow):
         self.act_undo = m_edit.addAction(tr("menu.undo"), self.undo)
         self.act_undo.setShortcut(QKeySequence.StandardKey.Undo)  # sempre pede confirmação
         self.act_recover = m_edit.addAction(tr("menu.recover"), self.recover)
+        m_edit.addSeparator()
+        self.act_animations = QAction(tr("menu.animations"), self, checkable=True)
+        self.act_animations.setChecked(self.neon_clock.enabled)
+        self.act_animations.toggled.connect(self.set_animations)
+        m_edit.addAction(self.act_animations)
 
         m_lang = bar.addMenu(tr("menu.language"))
         group = QActionGroup(self)
@@ -326,6 +406,7 @@ class MainWindow(QMainWindow):
 
         # --- regras
         box = QGroupBox(tr("rules.group"))
+        self.rules_box = box
         v = QVBoxLayout(box)
         self.rule_list = QListWidget()
         self.rule_list.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
@@ -371,6 +452,7 @@ class MainWindow(QMainWindow):
 
         # --- editor da regra
         ebox = QGroupBox(tr("editor.group"))
+        self.editor_box = ebox
         ev = QVBoxLayout(ebox)
         self.editor_area = QScrollArea()
         self.editor_area.setWidgetResizable(True)
@@ -380,6 +462,7 @@ class MainWindow(QMainWindow):
 
         # --- opções
         obox = QGroupBox(tr("options.group"))
+        self.options_box = obox
         form = QFormLayout(obox)
         self.sort_combo = QComboBox()
         for key in SortKey:
@@ -435,6 +518,7 @@ class MainWindow(QMainWindow):
 
     def _build_preview_panel(self) -> QWidget:
         panel = QGroupBox(tr("preview.group"))
+        self.preview_box = panel
         v = QVBoxLayout(panel)
         row = QHBoxLayout()
         self.only_changes_check = QCheckBox(tr("preview.only_changes"))
@@ -934,16 +1018,5 @@ class MainWindow(QMainWindow):
         box.exec()
 
     def show_about(self) -> None:
-        def avail(ok: bool) -> str:
-            return tr("about.available") if ok else tr("about.missing")
-
-        QMessageBox.about(
-            self,
-            tr("about.title"),
-            tr(
-                "about.text",
-                version=__version__,
-                pillow=avail(metadata.has_pillow()),
-                mutagen=avail(metadata.has_mutagen()),
-            ),
-        )
+        self.about_dialog = AboutDialog(self, animations=self.neon_clock.enabled)
+        self.about_dialog.exec()

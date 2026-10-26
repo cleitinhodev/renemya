@@ -1,21 +1,14 @@
-name: Release (Windows .exe)
+name: Build (Windows .exe)
 
-# Gera os executáveis do Windows.
-# - Tag "v*" (ex.: git tag v2.0.0 && git push origin v2.0.0): anexa os .exe ao Release.
-# - Push na branch de testes v2-pyside6 (ou execução manual): os .exe ficam só como
-#   artefatos da execução (aba Actions), sem Release público.
-#   Obs.: a execução manual (workflow_dispatch) só aparece quando este arquivo
-#   também existir na branch padrão.
+# Gera os executáveis do Windows (Renemya.exe e renemya-cli.exe).
+# - Push na main (ou execução manual em Actions > Run workflow): os .exe ficam só como
+#   artefatos da execução (aba Actions). Nenhuma tag ou Release é criada.
+# - Tag "v*" criada por você (ex.: git tag v2.0.0 && git push origin v2.0.0): além dos
+#   artefatos, anexa os .exe ao Release dessa tag.
 on:
   push:
+    branches: [main]
     tags: ["v*"]
-    branches: [v2-pyside6]
-    paths:
-      - "renemya/**"
-      - "packaging/**"
-      - "Design/**"
-      - "pyproject.toml"
-      - ".github/workflows/release.yml"
   workflow_dispatch:
 
 permissions:
@@ -39,8 +32,7 @@ jobs:
         run: >
           pyinstaller --noconfirm --clean --onefile --windowed
           --name Renemya
-          --icon Design/icone.ico
-          --add-data "Design;Design"
+          --icon renemya/gui/assets/renemya_icon.ico
           --paths .
           --collect-data renemya
           packaging/gui_launcher.py
@@ -48,7 +40,7 @@ jobs:
         run: >
           pyinstaller --noconfirm --onefile --console
           --name renemya-cli
-          --icon Design/icone.ico
+          --icon renemya/gui/assets/renemya_icon.ico
           --paths .
           --collect-data renemya
           packaging/cli_launcher.py
