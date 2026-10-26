@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Renemya
+GenericName=Batch File Renamer
+GenericName[pt_BR]=Renomeador de arquivos em lote
+Comment=Rename files in batch with preview and undo
+Comment[pt_BR]=Renomeie arquivos em lote com prévia e desfazer
+Exec=renemya %f
+Icon=renemya
+Terminal=false
+Categories=Utility;FileTools;Qt;
+Keywords=rename;batch;files;renomear;arquivos;lote;
+StartupWMClass=renemya
+StartupNotify=true

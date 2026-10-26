@@ -1,10 +1,11 @@
-name: Build (Windows .exe)
+name: Build e Release
 
-# Gera os executáveis do Windows (Renemya.exe e renemya-cli.exe).
-# - Push na main (ou execução manual em Actions > Run workflow): os .exe ficam só como
-#   artefatos da execução (aba Actions). Nenhuma tag ou Release é criada.
-# - Tag "v*" criada por você (ex.: git tag v2.0.0 && git push origin v2.0.0): além dos
-#   artefatos, anexa os .exe ao Release dessa tag.
+# Gera os executáveis do Renemya para Windows e Linux.
+# - Push na main (ou Actions > Run workflow): roda os testes, gera e testa os executáveis e guarda
+#   os pacotes como artefatos da execução (aba Actions). Nenhuma tag ou Release é criada.
+# - Tag "vX.Y.Z" (igual à versão do pyproject.toml), ex.: git tag v1.0.0 && git push origin v1.0.0:
+#   além dos artefatos, publica o Release com os pacotes, o SHA256SUMS.txt e as notas de
+#   .github/release-notes/vX.Y.Z.md.
 on:
   push:
     branches: [main]
@@ -12,10 +13,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  build-windows:
+  windows:
+    name: Windows (.zip)
     runs-on: windows-latest
     env:
       QT_QPA_PLATFORM: offscreen
@@ -25,9 +27,18 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install --upgrade pip
-      - run: pip install ".[dev,build]"
+      - run: pip install ".[dev,build]" markdown
       - name: Testes antes de empacotar
         run: pytest -q
+      - name: Versão confere com a tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          VER=$(python packaging/build_release.py version)
+          if [ "v$VER" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::A tag $GITHUB_REF_NAME não corresponde à versão $VER do projeto"
+            exit 1
+          fi
       - name: PyInstaller (interface)
         run: >
           pyinstaller --noconfirm --clean --onefile --windowed
@@ -44,15 +55,170 @@ jobs:
           --paths .
           --collect-data renemya
           packaging/cli_launcher.py
-      - name: Teste rápido do executável de linha de comando
-        run: dist/renemya-cli.exe --version
+      - name: Teste rápido dos executáveis
+        timeout-minutes: 5
+        shell: pwsh
+        run: |
+          dist\renemya-cli.exe --version
+          if ($LASTEXITCODE -ne 0) { throw "renemya-cli --version falhou" }
+          dist\renemya-cli.exe --help | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw "renemya-cli --help falhou" }
+          $p = Start-Process -FilePath dist\Renemya.exe -ArgumentList "--smoke-test" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Renemya.exe --smoke-test saiu com código $($p.ExitCode)" }
+          Write-Host "Renemya.exe abriu e fechou normalmente (smoke test ok)"
+      - name: Monta o pacote .zip (executáveis + LICENSE + guias)
+        run: python packaging/build_release.py package --platform windows --dist dist --out release
       - uses: actions/upload-artifact@v4
         with:
           name: Renemya-windows
-          path: dist/*.exe
-      - name: Publica no Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+          path: release/*.zip
+          if-no-files-found: error
+
+  linux:
+    name: Linux (.tar.gz e AppImage)
+    runs-on: ubuntu-22.04   # glibc 2.35: roda no Ubuntu 22.04+ e distribuições equivalentes
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
-          files: dist/*.exe
-          generate_release_notes: true
+          python-version: "3.12"
+      - name: Bibliotecas do sistema (Qt/xcb; o PyInstaller as copia para o executável)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libegl1 libgl1 libxkbcommon0 libxkbcommon-x11-0 libfontconfig1 libdbus-1-3 \
+            libx11-xcb1 libxcb1 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+            libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 \
+            libxcb-xfixes0 libxcb-sync1 libxcb-shm0 libxcb-render0 \
+            xvfb xauth file desktop-file-utils libfuse2
+      - run: python -m pip install --upgrade pip
+      - run: pip install ".[dev,build]" markdown
+      - name: Testes antes de empacotar
+        run: pytest -q
+      - name: Versão confere com a tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VER=$(python packaging/build_release.py version)
+          if [ "v$VER" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::A tag $GITHUB_REF_NAME não corresponde à versão $VER do projeto"
+            exit 1
+          fi
+      - name: PyInstaller (interface)
+        run: >
+          pyinstaller --noconfirm --clean --onefile --windowed
+          --name renemya
+          --paths .
+          --collect-data renemya
+          packaging/gui_launcher.py
+      - name: PyInstaller (linha de comando)
+        run: >
+          pyinstaller --noconfirm --onefile --console
+          --name renemya-cli
+          --paths .
+          --collect-data renemya
+          packaging/cli_launcher.py
+      - name: Confere se as bibliotecas do Qt/xcb foram embutidas
+        run: |
+          pyi-archive_viewer -l -r dist/renemya > archive.txt
+          for lib in libqxcb.so libqwayland libqoffscreen.so libQt6XcbQpa.so libxcb-cursor.so.0 \
+                     libxkbcommon-x11.so.0 libxcb-icccm.so.4 libxcb-keysyms.so.1 \
+                     renemya/gui/styles/theme.qss renemya/i18n/pt_BR.json renemya_icon.png; do
+            if grep -q "$lib" archive.txt; then echo "ok  $lib"; else echo "::error::$lib não está no executável"; exit 1; fi
+          done
+          file dist/renemya dist/renemya-cli
+      - name: Teste rápido dos executáveis (offscreen e X11 via Xvfb)
+        timeout-minutes: 5
+        run: |
+          dist/renemya-cli --version
+          dist/renemya-cli --help > /dev/null
+          dist/renemya --version
+          QT_QPA_PLATFORM=offscreen timeout 120 dist/renemya --smoke-test
+          QT_QPA_PLATFORM=xcb timeout 120 xvfb-run -a dist/renemya --smoke-test
+      - name: Teste num Ubuntu 22.04 limpo (só OpenGL/fontconfig do sistema; xcb embutido)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          docker run --rm -v "$PWD/dist:/app:ro" ubuntu:22.04 bash -euc '
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq
+            apt-get install -y -qq --no-install-recommends libegl1 libgl1 libfontconfig1 xvfb xauth > /dev/null
+            /app/renemya-cli --version
+            QT_QPA_PLATFORM=offscreen timeout 120 /app/renemya --smoke-test
+            QT_QPA_PLATFORM=xcb timeout 120 xvfb-run -a /app/renemya --smoke-test
+          '
+      - name: Monta o pacote .tar.gz (executáveis + install.sh + atalho + LICENSE + guias)
+        run: |
+          python packaging/build_release.py package --platform linux --dist dist --out release
+          desktop-file-validate packaging/linux/renemya.desktop
+      - name: AppImage (opcional)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          VER=$(python packaging/build_release.py version)
+          OUT="release/Renemya-$VER-x86_64.AppImage"
+          python packaging/build_release.py appdir --dist dist --out build/Renemya.AppDir
+          curl -fsSL -o build/appimagetool \
+            https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x build/appimagetool
+          ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 build/appimagetool --no-appstream build/Renemya.AppDir "$OUT"
+          if ! QT_QPA_PLATFORM=offscreen APPIMAGE_EXTRACT_AND_RUN=1 timeout 120 "$OUT" --smoke-test; then
+            echo "::warning::O AppImage não passou no teste e não será publicado"
+            rm -f "$OUT"
+            exit 1
+          fi
+          APPIMAGE_EXTRACT_AND_RUN=1 "$OUT" --cli --version
+      - run: ls -la release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Renemya-linux
+          path: |
+            release/*.tar.gz
+            release/*.AppImage
+          if-no-files-found: error
+
+  release:
+    name: Publica o Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+          merge-multiple: true
+      - name: SHA256SUMS.txt e notas do Release
+        run: |
+          cd assets
+          sha256sum -- * > SHA256SUMS.txt
+          ls -la
+          cat SHA256SUMS.txt
+          cd ..
+          NOTES=".github/release-notes/${GITHUB_REF_NAME}.md"
+          test -f "$NOTES" || { echo "::error::Faltam as notas $NOTES"; exit 1; }
+          cp "$NOTES" notes.md
+          if ! ls assets/*.AppImage > /dev/null 2>&1; then
+            sed -i '/x86_64\.AppImage` |/d' notes.md   # sem AppImage: tira a linha da tabela
+          fi
+          {
+            echo
+            echo "### SHA-256"
+            echo
+            echo '```'
+            cat assets/SHA256SUMS.txt
+            echo '```'
+          } >> notes.md
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Renemya ${{ github.ref_name }}
+          body_path: notes.md
+          draft: false
+          prerelease: false
+          make_latest: true
+          fail_on_unmatched_files: true
+          files: assets/*

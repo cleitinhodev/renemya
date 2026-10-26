@@ -14,14 +14,70 @@
 Before it touches anything it shows a full preview, refuses dangerous names, never overwrites a
 file, and lets you **undo** the last operation.
 
-> ⚠️ **Testing version.** Back up your important files until a stable release is out.
+<p align="center">
+  <img src="docs/img/claro.png" alt="Renemya, light theme" width="49%">
+  <img src="docs/img/escuro.png" alt="Renemya, dark theme" width="49%">
+</p>
 
 ## Download
 
-- Windows executables (`Renemya.exe` and `renemya-cli.exe`) are built on every push to `main`:
-  open the [Actions](https://github.com/cleitinhodev/renemya/actions) tab, pick the latest
-  **Build (Windows .exe)** run and download the **Renemya-windows** artifact.
-- Stable versions will be published under [Releases](https://github.com/cleitinhodev/renemya/releases).
+Get the latest version from **[Releases](https://github.com/cleitinhodev/renemya/releases/latest)**:
+
+| System | File |
+|---|---|
+| **Windows 10/11 (64-bit)** | `Renemya-<version>-windows-x64.zip`: portable, so just unzip it and run `Renemya.exe` |
+| **Linux x86-64** | `Renemya-<version>-linux-x64.tar.gz`: extract it, then run `./install.sh` (or `./renemya`) |
+| **Linux (single file)** | `Renemya-<version>-x86_64.AppImage`: only when the Release includes one |
+
+Each package includes the user guide (`README.md`, `LEIA-ME.html`) and the license (`LICENSE.txt`).
+Use `SHA256SUMS.txt` to verify your download. The full step-by-step tutorial is in Portuguese in
+the [README](README.md); a short English guide follows below.
+
+<!-- GUIA:INICIO (gerado de docs/guide.en.md; edite lá e rode packaging/build_release.py sync-readme) -->
+
+## 🇺🇸 English (short guide)
+
+**Renemya** is a safe batch file renamer: combine rules, check the live preview, rename, and undo
+whenever you want. Links: [Releases](https://github.com/cleitinhodev/renemya/releases) ·
+[source code](https://github.com/cleitinhodev/renemya) ·
+[issues](https://github.com/cleitinhodev/renemya/issues) ·
+[author](https://github.com/cleitinhodev) · [website](https://www.bugzinho.com/) ·
+[donate](https://www.bugzinho.com/donate).
+
+**Install.**
+- **Windows:** unzip `Renemya-<version>-windows-x64.zip` and run `Renemya.exe` (portable). If
+  SmartScreen appears, click *More info → Run anyway*.
+- **Linux** (glibc 2.35+): `tar -xzf Renemya-<version>-linux-x64.tar.gz`, then
+  `cd Renemya-<version>-linux-x64 && ./install.sh`. The installer puts the app in `~/.local/bin`
+  and adds a menu entry. Or just run `./renemya`. Qt and its xcb libraries are bundled; you only
+  need OpenGL/EGL (Mesa) and fontconfig. If you see "Qt platform plugin xcb", install
+  `libxcb-cursor0 libxkbcommon-x11-0`.
+
+**How to use.**
+1. Pick or drag a folder into the window.
+2. Add rules. They run top to bottom; drag to reorder, or untick to disable. There are 12 rules:
+   prefix/suffix, replace (regex), remove characters, insert, counter, letters,
+   date (modified/created/EXIF), case, cleanup, extension, template with tokens, music tags.
+3. Set the sorting and filters, and choose the conflict policy: add a (2) suffix, or skip.
+4. Read the preview:
+   - green: will be renamed
+   - orange: warning
+   - gray: skipped
+   - red: error (blocks renaming)
+   - dot: unchanged
+5. Click **Rename**. Undo with **Ctrl+Z**. Your history is under *File → Operation history*.
+6. Save and load rule sets with *File → Save/Load preset*. You can also switch the language
+   (*Language*), turn off the animations (*Edit → Animations*), and the theme follows the system.
+
+**CLI:**
+`renemya-cli rename ./photos --sort modified --template "Trip_{exif:%Y-%m-%d}_{n:03}" --dry-run`.
+Other commands: `renemya-cli rules`, `undo`, `history`, `recover`, and `--lang en`.
+
+**Why did the extension change?** Only the Extension rule, Replace (scope *extension*/*full
+name*) or Case (*also the extension*) touch it. Renaming an extension never converts the file,
+so the preview shows a warning.
+
+<!-- GUIA:FIM -->
 
 ## Highlights
 
@@ -117,9 +173,21 @@ pip install -e ".[dev]"
 ruff check . && ruff format --check . && pytest
 ```
 
-CI runs lint and tests on Ubuntu and Windows. Every push to `main` builds `Renemya.exe` and
-`renemya-cli.exe` with PyInstaller as workflow artifacts (no Release is created). If you push a
-`v*` tag, they are also attached to that tag's Release.
+CI runs lint and tests on Ubuntu and Windows. On every push to `main`, the **Build e Release**
+workflow:
+- builds the Windows and Linux (Ubuntu 22.04) executables with PyInstaller;
+- smoke-tests them (`--smoke-test`);
+- keeps the packages as workflow artifacts.
+
+Pushing a `vX.Y.Z` tag that matches the version in `pyproject.toml` also publishes a GitHub
+Release with these files:
+- the Windows `.zip`;
+- the Linux `.tar.gz`;
+- the AppImage, if it built;
+- `SHA256SUMS.txt`.
+
+The user guide sources are `docs/guia.md` and `docs/guide.en.md`. Run
+`python packaging/build_release.py sync-readme` after editing them.
 
 ## Credits
 

@@ -1,0 +1,8 @@
+#!/bin/sh
+# Ponto de entrada do AppImage. "--cli" usa a linha de comando: ./Renemya.AppImage --cli --help
+HERE=$(dirname "$(readlink -f "$0")")
+if [ "${1:-}" = "--cli" ]; then
+    shift
+    exec "$HERE/usr/bin/renemya-cli" "$@"
+fi
+exec "$HERE/usr/bin/renemya" "$@"
