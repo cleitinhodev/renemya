@@ -38,6 +38,15 @@ FONT_FAMILIES = [
 ]
 
 
+def apply_font(app: QApplication) -> None:
+    """Fonte da interface: famílias preferidas + fallback embutido para CJK/índicas/árabe."""
+    from .locale_support import fallback_families
+
+    font = QFont(app.font())
+    font.setFamilies(FONT_FAMILIES + fallback_families())
+    app.setFont(font)
+
+
 @dataclass(frozen=True)
 class ThemePalette:
     """Cores do tema. Os nomes viram ``{{chave}}`` dentro de ``theme.qss``."""
@@ -392,9 +401,7 @@ def apply_theme(app: QApplication, dark: bool | None = None) -> ThemePalette:
         # (com folha de estilo ativa, app.style() vira um "proxy" sem nome)
         app.setStyle("Fusion")
         app.setProperty("renemya_fusion", True)
-    font = QFont(app.font())
-    font.setFamilies(FONT_FAMILIES)
-    app.setFont(font)
+    apply_font(app)
     app.setPalette(_qt_palette(palette))
     app.setStyleSheet(build_stylesheet(palette))
     app.setProperty("renemya_dark", dark)

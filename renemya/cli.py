@@ -31,7 +31,15 @@ from .core import (
 from .core.executor import ApplyResult
 from .core.rules import RULE_TYPES, CaseRule, PrefixSuffixRule, ReplaceRule, Rule, TemplateRule
 from .core.scanner import parse_ext_list
-from .i18n import LANGUAGES, detect_language, error_text, issue_text, set_language, tr
+from .i18n import (
+    LANGUAGES,
+    detect_language,
+    error_text,
+    issue_text,
+    language_list,
+    set_language,
+    tr,
+)
 
 TRUE = {"1", "true", "sim", "s", "yes", "y", "on", "verdadeiro"}
 FALSE = {"0", "false", "nao", "não", "n", "no", "off", "falso"}
@@ -119,7 +127,9 @@ def build_parser() -> argparse.ArgumentParser:
         prog="renemya-cli", description=tr("cli.description"), epilog=tr("cli.epilog")
     )
     p.add_argument("--version", action="version", version=f"Renemya {__version__}")
-    p.add_argument("--lang", choices=sorted(LANGUAGES), help=tr("cli.help.lang"))
+    p.add_argument(
+        "--lang", choices=sorted(LANGUAGES), help=tr("cli.help.lang", langs=language_list())
+    )
     sub = p.add_subparsers(dest="command", required=True)
 
     r = sub.add_parser("rename", help=tr("cli.help.rename"), epilog=tr("cli.epilog"))

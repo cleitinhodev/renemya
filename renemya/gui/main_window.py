@@ -63,6 +63,7 @@ from ..core.scanner import parse_ext_list
 from ..i18n import LANGUAGES, error_text, get_language, set_language, tr
 from . import neon, theme
 from .dialogs import AboutDialog, HistoryDialog
+from .locale_support import apply_language, format_datetime
 from .preview_model import COLUMNS, PreviewDelegate, PreviewModel
 from .resources import TITLE_ICON, load_icon, set_windows_taskbar_icon
 from .rule_editor import RuleEditor
@@ -152,8 +153,9 @@ class MainWindow(QMainWindow):
         if ok_text:
             yes = box.addButton(ok_text, QMessageBox.ButtonRole.AcceptRole)
         else:
-            yes = box.addButton(QMessageBox.StandardButton.Yes)
-        cancel = box.addButton(QMessageBox.StandardButton.Cancel)
+            yes = box.addButton(tr("button.yes"), QMessageBox.ButtonRole.YesRole)
+        cancel = box.addButton(tr("button.cancel"), QMessageBox.ButtonRole.RejectRole)
+        box.setEscapeButton(cancel)
         box.setDefaultButton(cancel)  # segurança: Enter não confirma por engano
         box.exec()
         return box.clickedButton() is yes
@@ -165,6 +167,7 @@ class MainWindow(QMainWindow):
             "error": QMessageBox.Icon.Critical,
         }[kind]
         box = QMessageBox(icon, title, text, QMessageBox.StandardButton.Ok, self)
+        box.button(QMessageBox.StandardButton.Ok).setText(tr("button.ok"))
         if details:
             box.setDetailedText(details)
         box.exec()
@@ -806,7 +809,7 @@ class MainWindow(QMainWindow):
                 tr(
                     "undo.tooltip",
                     count=last.count,
-                    date=last.created_dt.strftime("%d/%m/%Y %H:%M"),
+                    date=format_datetime(last.created_dt),
                 )
             )
         else:
@@ -902,7 +905,7 @@ class MainWindow(QMainWindow):
         text = tr(
             "undo.confirm",
             count=entry.count,
-            date=entry.created_dt.strftime("%d/%m/%Y %H:%M:%S"),
+            date=format_datetime(entry.created_dt, seconds=True),
             folder=", ".join(entry.folders[:3]),
         )
         if not self.ask(tr("undo.confirm_title"), text, ok_text=tr("button.undo")):
@@ -956,6 +959,7 @@ class MainWindow(QMainWindow):
             return
         set_language(code)
         self.settings.setValue("language", code)
+        apply_language()
         self._build_ui()
         self.refresh_preview()
 
@@ -1014,6 +1018,7 @@ class MainWindow(QMainWindow):
             QMessageBox.StandardButton.Ok,
             self,
         )
+        box.button(QMessageBox.StandardButton.Ok).setText(tr("button.ok"))
         box.setTextFormat(Qt.TextFormat.RichText)
         box.exec()
 

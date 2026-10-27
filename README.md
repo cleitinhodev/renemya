@@ -13,7 +13,7 @@
 **rápida, previsível e segura**. Foi reescrito do zero em **Python + PySide6 (Qt)**. Antes de mexer
 em qualquer coisa ele mostra uma prévia completa, recusa nomes perigosos, nunca sobrescreve arquivos
 e deixa **desfazer** a operação. Funciona no **Windows** e no **Linux** (e no macOS pelo código-fonte),
-em **português** e **inglês**.
+em **15 idiomas**: português (Brasil), inglês, espanhol, chinês simplificado, hindi, árabe, francês, russo, bengali, japonês, alemão, indonésio, coreano, turco e italiano.
 
 <p align="center">
   <img src="docs/img/claro.png" alt="Renemya no tema claro" width="49%">
@@ -292,7 +292,12 @@ A mesma predefinição funciona na linha de comando (`--preset arquivo.json`). A
 
 ### 10. Idioma, tema e animações
 
-- **Idioma:** menu **Idioma → Português (Brasil) / English**. A troca é imediata e fica salva.
+- **Idioma:** menu **Idioma**, com 15 idiomas: Português (Brasil), English, Español, 中文（简体）,
+  हिन्दी, العربية, Français, Русский, বাংলা, 日本語, Deutsch, Bahasa Indonesia, 한국어, Türkçe e
+  Italiano. A troca é imediata e fica salva. Na primeira vez, o Renemya usa o idioma do sistema
+  (ou inglês, se o idioma do sistema não estiver na lista). Em árabe, a janela fica espelhada
+  (da direita para a esquerda). Para forçar um idioma, use a variável `RENEMYA_LANG` (ex.:
+  `RENEMYA_LANG=ja`).
 - **Tema:** claro ou escuro, **seguindo o tema do sistema** automaticamente (inclusive se você
   trocar com o programa aberto). Para forçar, defina a variável de ambiente
   `RENEMYA_THEME=light` ou `RENEMYA_THEME=dark`.
@@ -357,7 +362,7 @@ renemya-cli rename ./fotos --template "Foto_{n:03}" --save-preset fotos.json -n
 renemya-cli undo        # desfaz a última renomeação
 renemya-cli history     # histórico
 renemya-cli recover     # restaura uma operação interrompida
-renemya-cli --lang en rename ...   # mensagens em inglês
+renemya-cli --lang en rename ...   # mensagens em inglês (ou es, fr, de, ja, ar…)
 ```
 
 Opções do `rename`: `--sort name|modified|created|size|type|none`, `--desc`, `-r` (subpastas),

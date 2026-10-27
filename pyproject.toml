@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "renemya"
-version = "1.0.0"
+version = "1.1.0"
 description = "Renomeador de arquivos em lote seguro, com prévia, regras combináveis e desfazer."
 readme = "README.md"
 license = "GPL-3.0-only"
@@ -42,7 +42,7 @@ include = ["renemya*"]
 
 [tool.setuptools.package-data]
 "renemya.i18n" = ["*.json"]
-"renemya.gui" = ["styles/*.qss", "assets/*.ico", "assets/*.png"]
+"renemya.gui" = ["styles/*.qss", "assets/*.ico", "assets/*.png", "assets/fonts/*.ttf", "assets/fonts/OFL.txt"]
 
 [tool.ruff]
 line-length = 100

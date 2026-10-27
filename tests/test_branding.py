@@ -19,7 +19,7 @@ from renemya.gui import neon, resources, theme  # noqa: E402
 from renemya.gui.app import create_app  # noqa: E402
 from renemya.gui.dialogs import ABOUT_LINKS, DONATE_LINK, AboutDialog  # noqa: E402
 from renemya.gui.main_window import MainWindow  # noqa: E402
-from renemya.i18n import set_language, tr  # noqa: E402
+from renemya.i18n import LANGUAGES, set_language, tr  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -56,7 +56,7 @@ def test_no_old_name_left_in_sources():
             assert not any(o in text for o in old), path
 
 
-@pytest.mark.parametrize("lang", ["pt_BR", "en"])
+@pytest.mark.parametrize("lang", sorted(LANGUAGES))
 def test_translated_title(lang):
     set_language(lang)
     try:

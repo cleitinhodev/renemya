@@ -4,6 +4,37 @@ Todas as mudanças importantes do Renemya ficam registradas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto usa
 [versionamento semântico](https://semver.org/lang/pt-BR/).
 
+## [1.1.0] — 2026-10-27
+
+O Renemya agora fala **15 idiomas**. As funcionalidades são as mesmas da 1.0.0.
+
+### Adicionado
+- **13 idiomas novos** na interface e na linha de comando, além de português e inglês: espanhol,
+  chinês simplificado, hindi, árabe, francês, russo, bengali, japonês, alemão, indonésio,
+  coreano, turco e italiano. O menu **Idioma** mostra cada um com o nome nativo.
+- **Árabe da direita para a esquerda:** a janela inteira fica espelhada, inclusive a tabela de
+  prévia e os selos de situação.
+- **Fontes embutidas** (Noto, licença OFL) para chinês, japonês, coreano, hindi, bengali e árabe.
+  Elas só são usadas quando o sistema não tem fonte para essas escritas, por exemplo num Linux
+  mínimo com o AppImage.
+- `RENEMYA_LANG` e `renemya-cli --lang` aceitam os 15 códigos (`pt_BR`, `en`, `es`, `zh_CN`, `hi`,
+  `ar`, `fr`, `ru`, `bn`, `ja`, `de`, `id`, `ko`, `tr`, `it`).
+- Atalho do Linux (`renemya.desktop`) com descrição traduzida.
+
+### Mudado
+- Na primeira execução, o idioma segue o do sistema, inclusive no Windows (antes, nomes como
+  `Portuguese_Brazil` não eram reconhecidos). Se o idioma do sistema não estiver na lista, a
+  interface abre em inglês.
+- Datas da dica e da confirmação de **Desfazer** no formato do idioma escolhido (antes, sempre
+  dd/mm/aaaa).
+- Botões das caixas de diálogo (Sim, Cancelar, OK, Fechar) traduzidos. Os diálogos padrão do Qt
+  usam as traduções do próprio Qt quando existem.
+- `install.sh` com mensagens em inglês, ou em português se o sistema estiver em português.
+
+### Corrigido
+- O texto de ajuda da lista de regras vazia (`rules.empty_hint`) não existia e aparecia como a
+  chave crua.
+
 ## [1.0.0] — 2026-10-26
 
 Primeira versão estável do **Renemya**: o antigo *Rename This!* reescrito do zero em Python +

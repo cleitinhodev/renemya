@@ -124,8 +124,14 @@ jobs:
           pyi-archive_viewer -l -r dist/renemya > archive.txt
           for lib in libqxcb.so libqwayland libqoffscreen.so libQt6XcbQpa.so libxcb-cursor.so.0 \
                      libxkbcommon-x11.so.0 libxcb-icccm.so.4 libxcb-keysyms.so.1 \
-                     renemya/gui/styles/theme.qss renemya/i18n/pt_BR.json renemya_icon.png; do
+                     renemya/gui/styles/theme.qss renemya/i18n/pt_BR.json renemya/i18n/ar.json \
+                     renemya/i18n/zh_CN.json NotoSansSC-Regular.ttf NotoSansArabic-Bold.ttf \
+                     NotoSansBengali-Regular.ttf renemya_icon.png; do
             if grep -q "$lib" archive.txt; then echo "ok  $lib"; else echo "::error::$lib não está no executável"; exit 1; fi
+          done
+          # traduções do próprio Qt (botões/diálogos padrão); sem elas o app funciona, só avisa
+          for qm in qtbase_ja.qm qtbase_ar.qm; do
+            if grep -q "$qm" archive.txt; then echo "ok  $qm"; else echo "::warning::$qm não está no executável"; fi
           done
           file dist/renemya dist/renemya-cli
       - name: Teste rápido dos executáveis (offscreen e X11 via Xvfb)
@@ -147,6 +153,10 @@ jobs:
             /app/renemya-cli --version
             QT_QPA_PLATFORM=offscreen timeout 120 /app/renemya --smoke-test
             QT_QPA_PLATFORM=xcb timeout 120 xvfb-run -a /app/renemya --smoke-test
+            for lang in ar ja hi; do
+              RENEMYA_LANG=$lang QT_QPA_PLATFORM=offscreen timeout 120 /app/renemya --smoke-test
+            done
+            RENEMYA_LANG=ko /app/renemya-cli --help > /dev/null
           '
       - name: Monta o pacote .tar.gz (executáveis + install.sh + atalho + LICENSE + guias)
         run: |

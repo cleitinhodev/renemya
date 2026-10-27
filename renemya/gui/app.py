@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QApplication
 from .. import __version__
 from ..i18n import detect_language, set_language
 from . import theme
+from .locale_support import apply_language
 from .resources import APP_ICON, load_icon, set_windows_app_id
 
 
@@ -65,6 +66,7 @@ def main(argv: list[str] | None = None) -> int:
     app = create_app(argv)
     settings = QSettings("CleitinhoDEV", "Renemya")
     set_language(str(settings.value("language", "") or detect_language()))
+    apply_language(app)
     from .main_window import MainWindow
 
     window = MainWindow(settings=settings)
@@ -89,6 +91,7 @@ def _smoke_test(argv: list[str]) -> int:
         app = create_app(argv)
         settings = QSettings(os.path.join(tmp, "settings.ini"), QSettings.Format.IniFormat)
         set_language(detect_language())
+        apply_language(app)
         from .main_window import MainWindow
 
         window = MainWindow(settings=settings)

@@ -31,10 +31,14 @@ whenever you want. Links: [Releases](https://github.com/cleitinhodev/renemya/rel
 5. Click **Rename**. Undo with **Ctrl+Z**. Your history is under *File → Operation history*.
 6. Save and load rule sets with *File → Save/Load preset*. You can also switch the language
    (*Language*), turn off the animations (*Edit → Animations*), and the theme follows the system.
+7. Languages: Português (Brasil), English, Español, 中文（简体）, हिन्दी, العربية, Français, Русский,
+   বাংলা, 日本語, Deutsch, Bahasa Indonesia, 한국어, Türkçe and Italiano. On first run Renemya follows
+   the system language (English if it isn't listed); Arabic uses a right-to-left layout. Force one
+   with `RENEMYA_LANG` (e.g. `RENEMYA_LANG=ja`).
 
 **CLI:**
 `renemya-cli rename ./photos --sort modified --template "Trip_{exif:%Y-%m-%d}_{n:03}" --dry-run`.
-Other commands: `renemya-cli rules`, `undo`, `history`, `recover`, and `--lang en`.
+Other commands: `renemya-cli rules`, `undo`, `history`, `recover`, and `--lang <code>` (e.g. `--lang ja`).
 
 **Why did the extension change?** Only the Extension rule, Replace (scope *extension*/*full
 name*) or Case (*also the extension*) touch it. Renaming an extension never converts the file,

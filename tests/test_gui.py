@@ -186,3 +186,57 @@ def test_session_is_saved_and_restored(app, tmp_path):
     w2 = MainWindow(settings=settings, journal=j, check_incomplete=False)
     assert [r.type for r in w2.rules] == ["letters"]
     w2.close()
+
+
+def test_language_menu_lists_all_languages(window):
+    from renemya.i18n import LANGUAGES
+
+    menu = next(a.menu() for a in window.menuBar().actions() if a.menu() and a.text() == "&Idioma")
+    assert [a.text() for a in menu.actions()] == list(LANGUAGES.values())
+
+
+@pytest.mark.parametrize("lang", ["ar", "ja", "hi", "ru"])
+def test_switch_to_new_languages(window, app, lang):
+    from PySide6.QtCore import Qt
+
+    from renemya.i18n import tr
+
+    window.add_rule("counter")
+    try:
+        window.change_language(lang)
+        assert window.apply_button.text() == tr("button.apply")
+        expected = (
+            Qt.LayoutDirection.RightToLeft if lang == "ar" else Qt.LayoutDirection.LeftToRight
+        )
+        assert app.layoutDirection() == expected
+        assert window.isRightToLeft() == (lang == "ar")
+    finally:
+        window.change_language("pt_BR")
+    assert app.layoutDirection() == Qt.LayoutDirection.LeftToRight
+
+
+def test_dates_follow_locale():
+    from datetime import datetime
+
+    from renemya.gui.locale_support import format_datetime
+
+    d = datetime(2026, 10, 27, 14, 5, 9)
+    try:
+        set_language("pt_BR")
+        assert format_datetime(d) == "27/10/2026 14:05"
+        assert format_datetime(d, seconds=True) == "27/10/2026 14:05:09"
+        set_language("de")
+        assert format_datetime(d, seconds=True).endswith("14:05:09")
+        set_language("en")
+        assert "10/27" in format_datetime(d)
+    finally:
+        set_language("pt_BR")
+
+
+def test_bundled_fonts_present():
+    from renemya.gui.locale_support import SCRIPT_FONTS
+
+    for _ws, _family, prefix, _lang in SCRIPT_FONTS:
+        for style in ("Regular", "Bold"):
+            assert asset_path(f"fonts/{prefix}-{style}.ttf"), prefix
+    assert asset_path("fonts/OFL.txt")

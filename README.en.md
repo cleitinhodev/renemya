@@ -12,7 +12,9 @@
 **Renemya** (the new name of *Rename This!*) renames thousands of files at once, and does it
 **quickly, predictably and safely**. It is a from-scratch rewrite in **Python + PySide6 (Qt)**.
 Before it touches anything it shows a full preview, refuses dangerous names, never overwrites a
-file, and lets you **undo** the last operation.
+file, and lets you **undo** the last operation. The interface is available in **15 languages**:
+Portuguese (Brazil), English, Spanish, Simplified Chinese, Hindi, Arabic, French, Russian, Bengali,
+Japanese, German, Indonesian, Korean, Turkish and Italian.
 
 <p align="center">
   <img src="docs/img/claro.png" alt="Renemya, light theme" width="49%">
@@ -68,10 +70,14 @@ whenever you want. Links: [Releases](https://github.com/cleitinhodev/renemya/rel
 5. Click **Rename**. Undo with **Ctrl+Z**. Your history is under *File → Operation history*.
 6. Save and load rule sets with *File → Save/Load preset*. You can also switch the language
    (*Language*), turn off the animations (*Edit → Animations*), and the theme follows the system.
+7. Languages: Português (Brasil), English, Español, 中文（简体）, हिन्दी, العربية, Français, Русский,
+   বাংলা, 日本語, Deutsch, Bahasa Indonesia, 한국어, Türkçe and Italiano. On first run Renemya follows
+   the system language (English if it isn't listed); Arabic uses a right-to-left layout. Force one
+   with `RENEMYA_LANG` (e.g. `RENEMYA_LANG=ja`).
 
 **CLI:**
 `renemya-cli rename ./photos --sort modified --template "Trip_{exif:%Y-%m-%d}_{n:03}" --dry-run`.
-Other commands: `renemya-cli rules`, `undo`, `history`, `recover`, and `--lang en`.
+Other commands: `renemya-cli rules`, `undo`, `history`, `recover`, and `--lang <code>` (e.g. `--lang ja`).
 
 **Why did the extension change?** Only the Extension rule, Replace (scope *extension*/*full
 name*) or Case (*also the extension*) touch it. Renaming an extension never converts the file,
@@ -133,7 +139,7 @@ Template tokens:
 - Extension filters, subfolders, folders, hidden and system files.
 - Confirmation before applying, progress bar, final summary and Undo.
 - JSON presets.
-- Portuguese/English switch at runtime.
+- 15 interface languages, switchable at runtime (Arabic with a right-to-left layout).
 - Light/dark theme that follows the system, with **neon orange** accents (the fox's color):
   glowing streaks run along the header, the **Rename** button, the progress bar and the active
   panel. Turn them off in *Edit → Animations* (saved). They pause when the window is minimized

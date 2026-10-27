@@ -142,6 +142,12 @@ class PreviewModel(QAbstractTableModel):
         return None
 
 
+def _mirror(rect: QRectF, area) -> QRectF:
+    """Espelha ``rect`` horizontalmente dentro de ``area`` (layout da direita para a esquerda)."""
+    left = area.left() + area.left() + area.width() - rect.left() - rect.width()
+    return QRectF(left, rect.top(), rect.width(), rect.height())
+
+
 class PreviewDelegate(QStyledItemDelegate):
     """Desenha a coluna de situação como um "selo" colorido e uma faixa de cor no nº."""
 
@@ -168,7 +174,10 @@ class PreviewDelegate(QStyledItemDelegate):
                 painter.setPen(Qt.PenStyle.NoPen)
                 painter.setBrush(QColor(colors[0]))
                 r = option.rect
-                painter.drawRoundedRect(QRectF(r.left() + 2, r.top() + 5, 4, r.height() - 10), 2, 2)
+                bar = QRectF(r.left() + 2, r.top() + 5, 4, r.height() - 10)
+                if option.direction == Qt.LayoutDirection.RightToLeft:
+                    bar = _mirror(bar, r)
+                painter.drawRoundedRect(bar, 2, 2)
                 painter.restore()
             return
 
@@ -204,24 +213,34 @@ class PreviewDelegate(QStyledItemDelegate):
             fm = QFontMetrics(font)
             pill_w = fm.horizontalAdvance(label) + icon_size + 14
             pill = QRectF(r.left() - 6, pill.top(), pill_w, pill_h)
-        else:
+        name = _STATUS_ICON.get(item.status, "dot")
+        pix = theme.icon(name, strong).pixmap(icon_size, icon_size)
+        icon_rect = QRectF(pill.left() + 8, pill.center().y() - icon_size / 2, icon_size, icon_size)
+        text_rect = QRectF(
+            pill.left() + 12 + icon_size, pill.top(), fm.horizontalAdvance(label) + 2, pill.height()
+        )
+        rest = QRectF(pill.right() + 8, r.top(), r.right() - pill.right() - 8, r.height())
+        rtl = option.direction == Qt.LayoutDirection.RightToLeft
+        if rtl:  # árabe: selo à direita, ícone antes do texto (da direita para a esquerda)
+            pill, icon_rect, text_rect, rest = (
+                _mirror(x, r) for x in (pill, icon_rect, text_rect, rest)
+            )
+        if item.status is not Status.UNCHANGED:
             painter.setPen(QPen(QColor(strong), 1))
             painter.setBrush(QColor(soft))
             painter.drawRoundedRect(pill, pill_h / 2, pill_h / 2)
-        name = _STATUS_ICON.get(item.status, "dot")
-        pix = theme.icon(name, strong).pixmap(icon_size, icon_size)
-        painter.drawPixmap(int(pill.left() + 8), int(pill.center().y() - icon_size / 2), pix)
+        painter.drawPixmap(int(icon_rect.left()), int(icon_rect.top()), pix)
         painter.setFont(font)
         painter.setPen(QColor(strong))
-        text_rect = QRectF(pill.left() + 12 + icon_size, pill.top(), pill_w, pill.height())
-        painter.drawText(text_rect, int(Qt.AlignmentFlag.AlignVCenter), label)
-        if detail:
+        absolute = Qt.AlignmentFlag.AlignAbsolute | Qt.AlignmentFlag.AlignVCenter
+        painter.drawText(text_rect, int(absolute | Qt.AlignmentFlag.AlignLeft), label)
+        if detail and rest.width() > 8:
             painter.setFont(option.font)
             selected = bool(option.state & QStyle.StateFlag.State_Selected)
             painter.setPen(QColor(p.selection_text if selected else p.text_muted))
-            rest = QRectF(pill.right() + 8, r.top(), r.right() - pill.right() - 8, r.height())
             elided = QFontMetrics(option.font).elidedText(
                 detail, Qt.TextElideMode.ElideRight, int(rest.width())
             )
-            painter.drawText(rest, int(Qt.AlignmentFlag.AlignVCenter), elided)
+            side = Qt.AlignmentFlag.AlignRight if rtl else Qt.AlignmentFlag.AlignLeft
+            painter.drawText(rest, int(absolute | side), elided)
         painter.restore()

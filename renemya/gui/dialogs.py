@@ -67,6 +67,7 @@ class HistoryDialog(QDialog):
         self.table = table
 
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        buttons.button(QDialogButtonBox.StandardButton.Close).setText(tr("button.close"))
         open_dir = QPushButton(tr("history.open_dir"))
         buttons.addButton(open_dir, QDialogButtonBox.ButtonRole.ActionRole)
         open_dir.clicked.connect(
